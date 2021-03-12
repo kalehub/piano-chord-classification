@@ -35,22 +35,22 @@ def extract_feature(song):
     mfcc = librosa.feature.mfcc(y)
     # normalize values betweeen(-1,1)
     mfcc /= np.amax(np.absolute(mfcc))
-    return np.ndarray.flatten(mfcc)[:25000]
+    return np.ndarray.flatten(mfcc)[:1000]
 
 
 def init_extraction(ddir):
-    all_ciri = list()
-    label = list()
+    # all_ciri = list()
+    all_ciri = np.empty((0,1001), int)
     for root,subdir,files in os.walk(ddir):
         for fi in files:
             print(f'reading {os.path.join(root,fi)}..')
             # print(os.path.join(root, fi))
             sound_data = extract_feature(os.path.join(root,fi))
-            # print(sound_data)
-            # print(fi)
-            all_ciri.append(sound_data)
-            label.append(fi[:-4])
-    print(all_ciri, label)
+            sound_data = np.append(sound_data, fi[:-4])
+            # print(sound_data, sound_data.size)
+            all_ciri = np.append(all_ciri, np.array([sound_data]), axis=0)
+    # print(all_ciri, label)
+    return all_ciri
             
 
         
@@ -58,7 +58,8 @@ def init_extraction(ddir):
 def main():
     DATASET_DIR = 'dataset/'
     # read_mffc(DATASET_DIR)
-    init_extraction(DATASET_DIR)
+    data_feature = init_extraction(DATASET_DIR)
+    print(f'data feature:\n{data_feature}')
 
 
 
